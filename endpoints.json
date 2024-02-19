@@ -7,7 +7,7 @@
         "GET /endpoint": {
           "description": "what you can expect to recieve from the endpoint",
           "queries": ["any_possible_queries"],
-          "exampleResponse" : [{"key": "value for that key"}]
+          "exampleResponse" : [{"category": "data from category"}]
         }
       }
     }
