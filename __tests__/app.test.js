@@ -41,6 +41,10 @@ describe("/api", () => {
       .get("/api")
       .expect(200)
       .then((response) => {
+        expect(response.body.endpointsInformation).toHaveProperty('GET /api')
+        expect(response.body.endpointsInformation['GET /api']).toHaveProperty('description')
+        expect(response.body.endpointsInformation['GET /api']).toHaveProperty('queries')
+        expect(response.body.endpointsInformation['GET /api']).toHaveProperty('exampleResponse')
         expect(response.body.endpointsInformation).toEqual(endPoints);
       });
   });
