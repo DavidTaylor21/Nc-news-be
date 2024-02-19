@@ -71,4 +71,20 @@ describe("/api/articles/:article_id", () => {
         expect(typeof response.body.article.article_img_url).toBe("string");
       });
   });
+  test('Should respond with 404 and message article not found for article id given that does not exist', () =>{
+    return request(app)
+    .get("/api/articles/9999999")
+    .expect(404)
+    .then((response) => {
+        expect(response.body.msg).toBe('article not found')
+    })
+  })
+  test('Should respons with 400 and message bad request for article id that is not a number', () =>{
+    return request(app)
+    .get('/api/articles/notanumber')
+    .expect(400)
+    .then((response)=>{
+        expect(response.body.msg).toBe('Bad request')
+    })
+  })
 });
