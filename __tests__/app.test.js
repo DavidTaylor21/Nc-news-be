@@ -41,11 +41,50 @@ describe("/api", () => {
       .get("/api")
       .expect(200)
       .then((response) => {
-        expect(response.body.endpointsInformation).toHaveProperty('GET /api')
-        expect(response.body.endpointsInformation['GET /api']).toHaveProperty('description')
-        expect(response.body.endpointsInformation['GET /api']).toHaveProperty('queries')
-        expect(response.body.endpointsInformation['GET /api']).toHaveProperty('exampleResponse')
+        expect(response.body.endpointsInformation).toHaveProperty("GET /api");
+        expect(response.body.endpointsInformation["GET /api"]).toHaveProperty(
+          "description"
+        );
+        expect(response.body.endpointsInformation["GET /api"]).toHaveProperty(
+          "queries"
+        );
+        expect(response.body.endpointsInformation["GET /api"]).toHaveProperty(
+          "exampleResponse"
+        );
         expect(response.body.endpointsInformation).toEqual(endPoints);
       });
   });
+});
+describe("/api/articles/:article_id", () => {
+  test("SHould respond with 200 status and an object corresponding to the given article id", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((response) => {
+        expect(typeof response.body.article.article_id).toBe("number");
+        expect(typeof response.body.article.title).toBe("string");
+        expect(typeof response.body.article.topic).toBe("string");
+        expect(typeof response.body.article.author).toBe("string");
+        expect(typeof response.body.article.body).toBe("string");
+        expect(typeof response.body.article.created_at).toBe("string");
+        expect(typeof response.body.article.votes).toBe("number");
+        expect(typeof response.body.article.article_img_url).toBe("string");
+      });
+  });
+  test('Should respond with 404 and message article not found for article id given that does not exist', () =>{
+    return request(app)
+    .get("/api/articles/9999999")
+    .expect(404)
+    .then((response) => {
+        expect(response.body.msg).toBe('article not found')
+    })
+  })
+  test('Should respons with 400 and message bad request for article id that is not a number', () =>{
+    return request(app)
+    .get('/api/articles/notanumber')
+    .expect(400)
+    .then((response)=>{
+        expect(response.body.msg).toBe('Bad request')
+    })
+  })
 });
