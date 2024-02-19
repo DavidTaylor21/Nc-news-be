@@ -10,5 +10,17 @@ function selectArticleById(article_id){
         return response.rows[0]
     })
 }
+function selectAllArticles(){
+    return db.query(`
+    SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles
+    LEFT JOIN comments
+    ON articles.article_id = comments.article_id
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC;
+    `)
+    .then((response)=>{
+        return response.rows
+    })
+}
 
-module.exports = {selectArticleById}
+module.exports = {selectArticleById, selectAllArticles}
