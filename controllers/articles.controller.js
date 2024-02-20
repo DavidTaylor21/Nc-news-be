@@ -1,8 +1,13 @@
 const {
   selectArticleById,
   selectAllArticles,
-  selectCommentsByArticle,
 } = require("../models/articles.models");
+
+const {
+  insertComment,
+  selectCommentsByArticle,
+} = require("../models/comments.models");
+
 function getArticleById(req, res, next) {
   const { article_id } = req.params;
   selectArticleById(article_id)
@@ -29,5 +34,19 @@ function getCommentsByArticle(req, res, next) {
     })
     .catch(next);
 }
+function postCommentForArticle(req, res, next) {
+  const { article_id } = req.params;
+  const body = req.body;
+  Promise.all([selectArticleById(article_id), insertComment(article_id, body)])
+    .then((comment) => {
+      res.status(201).send({ comment : comment[1]});
+    })
+    .catch(next)
+}
 
-module.exports = { getArticleById, getAllArticles, getCommentsByArticle };
+module.exports = {
+  getArticleById,
+  getAllArticles,
+  getCommentsByArticle,
+  postCommentForArticle,
+};
