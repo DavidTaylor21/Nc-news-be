@@ -321,3 +321,26 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   })
 });
+describe('DELETE /api/comments/:comment_id', () => {
+    test('Should respond with 204 and no content', () => {
+        return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+    })
+    test('Should respond with 404 comment does not exist for comments that dont exist', () => {
+        return request(app)
+        .delete("/api/comments/9999999")
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe('comment does not exist')
+        })
+    })
+    test('Should respond with 400 bad request for comment_id given thats not a number', () => {
+        return request(app)
+        .delete("/api/comments/notanumber")
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('Bad request')
+        })
+    })
+})

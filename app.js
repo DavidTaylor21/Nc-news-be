@@ -12,6 +12,7 @@ const handleCustomErrors = require("./errorHandling/handleCustomErrors");
 const handlePsqlErrors = require("./errorHandling/handlePsqlErrors");
 const handleServerErrors = require("./errorHandling/handleServerErrors");
 const handleInvalidEndpointErrors = require("./errorHandling/handleInvalidEndpointErrors");
+const {deleteCommentById} = require('./controllers/comments.controller')
 
 const app = express();
 app.use(express.json());
@@ -25,6 +26,8 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticle);
 app.post("/api/articles/:article_id/comments", postCommentForArticle);
 app.patch("/api/articles/:article_id", patchVotesOnArticle)
+
+app.delete("/api/comments/:comment_id", deleteCommentById)
 
 app.all("/api/*", handleInvalidEndpointErrors);
 
