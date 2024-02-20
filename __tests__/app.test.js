@@ -202,11 +202,23 @@ describe("POST /api/articles/:article_id/comments", () => {
           expect(response.body.msg).toBe("article not found");
         })
   })
-  test('Should respond with 400 and bad request when the body doesnt contain all the required information', () => {
+  test('Should respond with 400 and bad request when the body doesnt contain body property ', () => {
     const newComment = {
         username: "rogersop",
       };
         return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe('content missing from body')
+        })
+  })
+  test('Should respond with 400 and bad request when the body doesnt contain username', () => {
+    const newComment = {
+        body: "a comment for this article"
+    }
+    return request(app)
         .post("/api/articles/1/comments")
         .send(newComment)
         .expect(400)
