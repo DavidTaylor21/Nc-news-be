@@ -86,5 +86,10 @@
     "description" : "Will increment or decrement the votes based on the number passed on the object in the body. Responds with updated article",
     "queries" : [],
     "exampleRequest" : { "inc_votes" : 5 }
+  },
+  "DELETE /api/comments/notanumber" : {
+    "description" : "Will delete the comment corresponding to the comment_id given. Will not respond with any content",
+    "queries" : [],
+    "exampleRequest" : {}
   }
 }
