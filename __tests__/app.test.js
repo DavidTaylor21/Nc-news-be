@@ -270,8 +270,8 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(response.body.updatedArticle).toEqual(expectedOutput);
       });
   });
-  test('Should respond with 200 and updated article with votes below 0', () => {
-    const body = {inc_votes : -200}
+  test("Should respond with 200 and updated article with votes below 0", () => {
+    const body = { inc_votes: -200 };
     return request(app)
       .patch("/api/articles/1")
       .send(body)
@@ -279,68 +279,81 @@ describe("PATCH /api/articles/:article_id", () => {
       .then((response) => {
         expect(response.body.updatedArticle.votes).toBe(-100);
       });
-  })
-  test('Should respond with 400 and bad request when body contains value that is not a number', () => {
-    const body = {inc_votes : 'notanumber'}
+  });
+  test("Should respond with 400 and bad request when body contains value that is not a number", () => {
+    const body = { inc_votes: "notanumber" };
     return request(app)
       .patch("/api/articles/1")
       .send(body)
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe('Bad request');
+        expect(response.body.msg).toBe("Bad request");
       });
-  })
-  test('Should respond with 400 and content missing if body is empty', () => {
-    const body = {}
+  });
+  test("Should respond with 400 and content missing if body is empty", () => {
+    const body = {};
     return request(app)
       .patch("/api/articles/1")
       .send(body)
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe('content missing from body');
+        expect(response.body.msg).toBe("content missing from body");
       });
-  })
-  test('Should respond with 404 for article_id that does not exist', () => {
-    const body = {inc_votes:5}
+  });
+  test("Should respond with 404 for article_id that does not exist", () => {
+    const body = { inc_votes: 5 };
     return request(app)
       .patch("/api/articles/999999")
       .send(body)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe('article not found');
+        expect(response.body.msg).toBe("article not found");
       });
-  })
-  test('Should respond with 400 for article_id that is not a number', () => {
-    const body = {inc_votes:5}
+  });
+  test("Should respond with 400 for article_id that is not a number", () => {
+    const body = { inc_votes: 5 };
     return request(app)
       .patch("/api/articles/notanumber")
       .send(body)
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe('Bad request');
+        expect(response.body.msg).toBe("Bad request");
       });
-  })
+  });
 });
-describe('DELETE /api/comments/:comment_id', () => {
-    test('Should respond with 204 and no content', () => {
-        return request(app)
-        .delete("/api/comments/1")
-        .expect(204)
-    })
-    test('Should respond with 404 comment does not exist for comments that dont exist', () => {
-        return request(app)
-        .delete("/api/comments/9999999")
-        .expect(404)
-        .then((response) => {
-            expect(response.body.msg).toBe('comment does not exist')
-        })
-    })
-    test('Should respond with 400 bad request for comment_id given thats not a number', () => {
-        return request(app)
-        .delete("/api/comments/notanumber")
-        .expect(400)
-        .then((response) => {
-            expect(response.body.msg).toBe('Bad request')
-        })
-    })
-})
+describe("DELETE /api/comments/:comment_id", () => {
+  test("Should respond with 204 and no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("Should respond with 404 comment does not exist for comments that dont exist", () => {
+    return request(app)
+      .delete("/api/comments/9999999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("comment does not exist");
+      });
+  });
+  test("Should respond with 400 bad request for comment_id given thats not a number", () => {
+    return request(app)
+      .delete("/api/comments/notanumber")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+describe("GET api/users", () => {
+  test("Should respond with 200 and an array of objects containing all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users.length).toBe(4);
+        response.body.users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+      })
+  });
+});
