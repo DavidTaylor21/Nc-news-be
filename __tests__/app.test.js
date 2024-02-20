@@ -189,29 +189,135 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
-  test('Should respond with 404 article not found for an article_id that doesnt exist', () => {
+  test("Should respond with 404 article not found for an article_id that doesnt exist", () => {
     const newComment = {
-        username: "rogersop",
-        body: "a comment for this article",
-      };
-      return request(app)
-        .post("/api/articles/9999999/comments")
-        .send(newComment)
-        .expect(404)
-        .then((response) => {
-          expect(response.body.msg).toBe("article not found");
-        })
+      username: "rogersop",
+      body: "a comment for this article",
+    };
+    return request(app)
+      .post("/api/articles/9999999/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article not found");
+      });
+  });
+  test("Should respond with 400 and bad request when the body doesnt contain body property ", () => {
+    const newComment = {
+      username: "rogersop",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+  test("Should respond with 400 and bad request when the body doesnt contain username", () => {
+    const newComment = {
+      body: "a comment for this article",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+});
+describe("PATCH /api/articles/:article_id", () => {
+  test("Should respond with 200 and responds with updated article when increasing votes", () => {
+    const body = { inc_votes: 5 };
+    const expectedOutput = {
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T20:11:00.000Z",
+      votes: 105,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(body)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedArticle).toEqual(expectedOutput);
+      });
+  });
+  test("Should respond with 200 and responds with updated article when decreasing votes", () => {
+    const body = { inc_votes: -5 };
+    const expectedOutput = {
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T20:11:00.000Z",
+      votes: 95,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(body)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedArticle).toEqual(expectedOutput);
+      });
+  });
+  test('Should respond with 200 and updated article with votes below 0', () => {
+    const body = {inc_votes : -200}
+    return request(app)
+      .patch("/api/articles/1")
+      .send(body)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedArticle.votes).toBe(-100);
+      });
   })
-  test('Should respond with 400 and bad request when the body doesnt contain all the required information', () => {
-    const newComment = {
-        username: "rogersop",
-      };
-        return request(app)
-        .post("/api/articles/1/comments")
-        .send(newComment)
-        .expect(400)
-        .then((response) => {
-            expect(response.body.msg).toBe('content missing from body')
-        })
+  test('Should respond with 400 and bad request when body contains value that is not a number', () => {
+    const body = {inc_votes : 'notanumber'}
+    return request(app)
+      .patch("/api/articles/1")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('Bad request');
+      });
+  })
+  test('Should respond with 400 and content missing if body is empty', () => {
+    const body = {}
+    return request(app)
+      .patch("/api/articles/1")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('content missing from body');
+      });
+  })
+  test('Should respond with 404 for article_id that does not exist', () => {
+    const body = {inc_votes:5}
+    return request(app)
+      .patch("/api/articles/999999")
+      .send(body)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe('article not found');
+      });
+  })
+  test('Should respond with 400 for article_id that is not a number', () => {
+    const body = {inc_votes:5}
+    return request(app)
+      .patch("/api/articles/notanumber")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('Bad request');
+      });
   })
 });
