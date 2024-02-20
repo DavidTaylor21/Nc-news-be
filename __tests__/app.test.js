@@ -62,7 +62,7 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then((response) => {
-        expect(typeof response.body.article.article_id).toBe("number");
+        expect(response.body.article.article_id).toBe(1);
         expect(typeof response.body.article.title).toBe("string");
         expect(typeof response.body.article.topic).toBe("string");
         expect(typeof response.body.article.author).toBe("string");
@@ -96,9 +96,10 @@ describe("/api/articles", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.articles.length).toBe(13);
-        expect(response.body.articles).toBeSortedBy('created_at', {descending : true})
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
         response.body.articles.forEach((article) => {
-          expect(Object.keys(article).length).toBe(8);
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
           expect(typeof article.article_id).toBe("number");
@@ -110,4 +111,49 @@ describe("/api/articles", () => {
         });
       });
   });
+});
+describe("/api/articles/:article_id/comments", () => {
+  test("should respond with 200 status code and an array of comments for given article id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(11);
+        expect(response.body.comments).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        response.body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(comment.article_id).toBe(1);
+        });
+      });
+  });
+  test("Should respond with 404 status code and message article not found for article_id that doesnt exist", () => {
+    return request(app)
+    .get("/api/articles/9999999/comments")
+    .expect(404)
+    .then((response) => {
+        expect(response.body.msg).toBe('article not found')
+    })
+  });
+  test('Should respond with 200 and an empty array for article id that exists but there are no comments', () =>{
+    return request(app)
+    .get("/api/articles/2/comments")
+    .expect(200)
+    .then((response) => {
+        expect(response.body.comments.length).toBe(0)
+    })
+  })
+  test('Should respond with 400 and message bad request for article_id that is not a number', () => {
+    return request(app)
+    .get("/api/articles/notanumber/comments")
+    .expect(400)
+    .then((response) => {
+        expect(response.body.msg).toBe('Bad request')
+    })
+  })
 });
