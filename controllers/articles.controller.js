@@ -1,6 +1,7 @@
 const {
   selectArticleById,
   selectAllArticles,
+  updateVotesOnArticle
 } = require("../models/articles.models");
 
 const {
@@ -43,10 +44,20 @@ function postCommentForArticle(req, res, next) {
     })
     .catch(next)
 }
+function patchVotesOnArticle(req,res,next){
+    const {article_id} = req.params
+    const votes = req.body.inc_votes
+    Promise.all([selectArticleById(article_id), updateVotesOnArticle(article_id,votes)])
+    .then((updatedArticle) => {
+        res.status(200).send({updatedArticle : updatedArticle[1]})
+    })
+    .catch(next)
+}
 
 module.exports = {
   getArticleById,
   getAllArticles,
   getCommentsByArticle,
   postCommentForArticle,
+  patchVotesOnArticle
 };

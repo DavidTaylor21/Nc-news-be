@@ -81,5 +81,10 @@
       "username": "username",
       "body": "a comment for this article"
     }
+  },
+  "PATCH /api/articles/:article_id" : {
+    "description" : "Will increment or decrement the votes based on the number passed on the object in the body. Responds with updated article",
+    "queries" : [],
+    "exampleRequest" : { "inc_votes" : 5 }
   }
 }
