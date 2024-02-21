@@ -384,3 +384,13 @@ describe("QUERY api/articles?topic", () => {
       });
   });
 });
+describe('NEW FEATURE /api/articles/:article_id (comment_count)', () => {
+    test('should respond with 200 status code and an article containing the comment count property', () => {
+        return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((response) => {
+        expect(typeof response.body.article.comment_count).toBe('number')
+      })
+    })
+})
