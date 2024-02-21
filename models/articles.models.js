@@ -3,7 +3,7 @@ function selectArticleById(article_id) {
   return db
     .query(
       `
-    SELECT articles.body, articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles
+    SELECT articles.article_id, title, topic, articles.author, articles.body, articles.created_at, articles.votes, article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles
     LEFT JOIN comments
     ON articles.article_id = comments.article_id
     WHERE articles.article_id = $1
