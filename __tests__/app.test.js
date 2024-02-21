@@ -354,6 +354,41 @@ describe("GET api/users", () => {
           expect(typeof user.name).toBe("string");
           expect(typeof user.avatar_url).toBe("string");
         });
-      })
+      });
   });
+});
+describe("QUERY api/articles?topic", () => {
+  test("Should respond with 200 and array of articles about the topic specified", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(1);
+        expect(response.body.articles[0].topic).toBe("cats");
+      });
+  });
+  test("Should respond with 400 bad request for query that does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=topicdoesnotexist")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("Should respond with 200 and an empty array for a valid topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toEqual([]);
+      });
+  });
+  test('Should respond with 400 bad request for topic query that isnt a string', () => {
+    return request(app)
+    .get("/api/articles?topic=4")
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe("Bad request");
+    });
+  })
 });

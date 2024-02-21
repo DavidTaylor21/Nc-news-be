@@ -14,18 +14,30 @@ function selectArticleById(article_id) {
       return response.rows[0];
     });
 }
-function selectAllArticles() {
+function selectAllArticles(topicQuery, allTopics) {
+  let validTopic = false
+  for(const topic of allTopics){
+    if(topic.slug === topicQuery){
+      validTopic = true
+    }
+  }
+  const values = []
+  let queryStr = `
+  SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles
+  LEFT JOIN comments
+  ON articles.article_id = comments.article_id`
+  if(topicQuery){
+    queryStr += ' WHERE articles.topic = $1'
+    values.push(topicQuery)
+}
+queryStr+= ` GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
+
   return db
-    .query(
-      `
-    SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles
-    LEFT JOIN comments
-    ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;
-    `
-    )
+    .query(queryStr, values)
     .then((response) => {
+      if(topicQuery && !validTopic){
+        return Promise.reject({status:400, msg: 'Bad request'})
+      }
       return response.rows;
     });
 }

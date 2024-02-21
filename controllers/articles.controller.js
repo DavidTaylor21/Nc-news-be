@@ -9,6 +9,8 @@ const {
   selectCommentsByArticle,
 } = require("../models/comments.models");
 
+const { selectAllTopics } = require("../models/topics.model");
+
 function getArticleById(req, res, next) {
   const { article_id } = req.params;
   selectArticleById(article_id)
@@ -18,9 +20,12 @@ function getArticleById(req, res, next) {
     .catch(next);
 }
 function getAllArticles(req, res, next) {
-  selectAllArticles()
-    .then((articles) => {
-      res.status(200).send({ articles });
+  const topicQuery = req.query.topic;
+  selectAllTopics()
+    .then((allTopics) => {
+      return selectAllArticles(topicQuery, allTopics).then((articles) => {
+        res.status(200).send({ articles });
+      })
     })
     .catch(next);
 }
