@@ -1,7 +1,7 @@
 const {
   selectArticleById,
   selectAllArticles,
-  updateVotesOnArticle
+  updateVotesOnArticle,
 } = require("../models/articles.models");
 
 const {
@@ -40,18 +40,21 @@ function postCommentForArticle(req, res, next) {
   const body = req.body;
   Promise.all([selectArticleById(article_id), insertComment(article_id, body)])
     .then((comment) => {
-      res.status(201).send({ comment : comment[1]});
+      res.status(201).send({ comment: comment[1] });
     })
-    .catch(next)
+    .catch(next);
 }
-function patchVotesOnArticle(req,res,next){
-    const {article_id} = req.params
-    const votes = req.body.inc_votes
-    Promise.all([selectArticleById(article_id), updateVotesOnArticle(article_id,votes)])
+function patchVotesOnArticle(req, res, next) {
+  const { article_id } = req.params;
+  const votes = req.body.inc_votes;
+  Promise.all([
+    selectArticleById(article_id),
+    updateVotesOnArticle(article_id, votes),
+  ])
     .then((updatedArticle) => {
-        res.status(200).send({updatedArticle : updatedArticle[1]})
+      res.status(200).send({ updatedArticle: updatedArticle[1] });
     })
-    .catch(next)
+    .catch(next);
 }
 
 module.exports = {
@@ -59,5 +62,5 @@ module.exports = {
   getAllArticles,
   getCommentsByArticle,
   postCommentForArticle,
-  patchVotesOnArticle
+  patchVotesOnArticle,
 };
