@@ -390,7 +390,9 @@ describe('NEW FEATURE /api/articles/:article_id (comment_count)', () => {
       .get("/api/articles/1")
       .expect(200)
       .then((response) => {
-        expect(typeof response.body.article.comment_count).toBe('number')
+        console.log(response.body.article)
+        expect(response.body.article.comment_count).toBe(11)
+        expect(response.body.article.article_id).toBe(1)
       })
     })
 })
