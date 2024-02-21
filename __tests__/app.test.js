@@ -367,12 +367,12 @@ describe("QUERY api/articles?topic", () => {
         expect(response.body.articles[0].topic).toBe("cats");
       });
   });
-  test("Should respond with 400 bad request for query that does not exist", () => {
+  test("Should respond with 404 topic not found for query that does not exist", () => {
     return request(app)
       .get("/api/articles?topic=topicdoesnotexist")
-      .expect(400)
+      .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("Bad request");
+        expect(response.body.msg).toBe("topic not found");
       });
   });
   test("Should respond with 200 and an empty array for a valid topic with no articles", () => {
@@ -383,12 +383,4 @@ describe("QUERY api/articles?topic", () => {
         expect(response.body.articles).toEqual([]);
       });
   });
-  test('Should respond with 400 bad request for topic query that isnt a string', () => {
-    return request(app)
-    .get("/api/articles?topic=4")
-    .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe("Bad request");
-    });
-  })
 });

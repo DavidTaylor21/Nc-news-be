@@ -36,7 +36,7 @@ queryStr+= ` GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
     .query(queryStr, values)
     .then((response) => {
       if(topicQuery && !validTopic){
-        return Promise.reject({status:400, msg: 'Bad request'})
+        return Promise.reject({status:404, msg: 'topic not found'})
       }
       return response.rows;
     });
