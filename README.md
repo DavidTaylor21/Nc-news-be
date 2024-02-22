@@ -1,5 +1,53 @@
+
 # Northcoders News API
 
-To run this locally, 2 environment variables must be setup to run with either a test database or a development database. 
-One file named .env.test and one file named .env.development must be created. 
-In these files you should include PGDATABASE=  followed by the name or your test and development databases to set the environment that is running to either the test environment or the development environment.
+## Summary
+This project entails the development of an API to facilitate seamless communication between the frontend and the database. The API aims to emulate a real-world backend service, like Reddit, by providing essential functionalities required by the frontend architecture.
+
+## Hosted Version
+https://nc-news-a2p3.onrender.com/api
+
+## Minimum Requirements
+- Node.js version 6.0.0 or higher
+- PostgreSQL version 16.1 or higher
+
+## Instructions
+To utilize this API effectively, follow these instructions:
+
+1. **Clone the Repository**: 
+    ```
+    git clone [repository-url]
+    cd [project-folder]
+    ```
+
+2. **Install Dependencies**: 
+    ```
+    npm install
+    ```
+
+3. **Set Up Local Database**:
+    - Create a local PostgreSQL database using the script (`npm run setup-dbs`).
+    - Seed the database with sample data using the script (`npm run seed`).
+
+4. **Create .env Files**:
+    - Create a `.env` file for development environment and another `.env.test` file for testing environment.
+    - Specify the following environment variables in each `.env` file:
+        ```
+        PGDATABASE=your_database_name
+        ```
+
+5. **Run Tests**:
+    ```
+    npm test
+    ```
+
+6. **Start the Server**:
+    ```
+    npm start
+    ```
+
+7. **API Interaction**:
+    - Utilize tools like Postman or Insomnia to interact with the API endpoints listed at /api.
+
+## Feedback and Contributions
+Feedback and contributions to this project are welcome. If you encounter any issues or have suggestions for improvement, feel free to open an issue or submit a pull request.
