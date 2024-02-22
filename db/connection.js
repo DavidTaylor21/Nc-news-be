@@ -14,5 +14,6 @@ if (ENV === 'production') {
   config.connectionString = process.env.DATABASE_URL;
   config.max = 2;
 }
+console.log(ENV)
 
-module.exports = new Pool();
+module.exports = new Pool(config);
