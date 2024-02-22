@@ -384,15 +384,114 @@ describe("QUERY api/articles?topic", () => {
       });
   });
 });
-describe('NEW FEATURE /api/articles/:article_id (comment_count)', () => {
-    test('should respond with 200 status code and an article containing the comment count property', () => {
-        return request(app)
+describe("NEW FEATURE /api/articles/:article_id (comment_count)", () => {
+  test("should respond with 200 status code and an article containing the comment count property", () => {
+    return request(app)
       .get("/api/articles/1")
       .expect(200)
       .then((response) => {
-        console.log(response.body.article)
-        expect(response.body.article.comment_count).toBe(11)
-        expect(response.body.article.article_id).toBe(1)
-      })
-    })
-})
+        expect(response.body.article.comment_count).toBe(11);
+        expect(response.body.article.article_id).toBe(1);
+      });
+  });
+});
+describe("sort by query /api/articles", () => {
+  test("Should respond with 200 and the articles sorted by title", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("title", {
+          descending: true,
+        });
+      });
+  });
+  test("Should respond with 200 and the articles sorted by topic", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("topic", {
+          descending: true,
+        });
+      });
+  });
+  test("Should respond with 200 and the articles sorted by author", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("author", {
+          descending: true,
+        });
+      });
+  });
+  test("Should respond with 200 and the articles sorted by votes", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("votes", {
+          descending: true,
+        });
+      });
+  });
+  test("Should respond with 200 and the articles sorted by comment_count", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("comment_count", {
+          descending: true,
+        });
+      });
+  });
+  test("Should respond with 200 and the articles sorted by article_id", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("article_id", {
+          descending: true,
+        });
+      });
+  });
+  test("Should respond with bad request 400 for column that does not exist", () => {
+    return request(app)
+      .get("/api/articles/sort_by=columnthatdoesntexist")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+describe("ORDER /api/articles", () => {
+  test("Should respond with 200 and articles ordered by specified order", () => {
+    return request(app)
+      .get("/api/articles?order=ASC")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: false,
+        });
+      });
+  });
+  test('Should respond with 200 and articles ordered by comment_count in ascending order when specified', () => {
+    return request(app)
+      .get("/api/articles?order=ASC&sort_by=comment_count")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("comment_count", {
+          descending: false,
+        });
+      });
+  })
+  test('Should respond with 400 bad request for order that is not asc or desc', () => {
+    return request(app)
+      .get("/api/articles/order=notavalidorder")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  })
+});

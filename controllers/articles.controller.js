@@ -20,10 +20,11 @@ function getArticleById(req, res, next) {
     .catch(next);
 }
 function getAllArticles(req, res, next) {
-  const topicQuery = req.query.topic;
+  const {sort_by, order} = req.query
+  const topicQuery = req.query.topic
   selectAllTopics()
     .then((allTopics) => {
-      return selectAllArticles(topicQuery, allTopics).then((articles) => {
+      return selectAllArticles(topicQuery, allTopics, sort_by, order).then((articles) => {
         res.status(200).send({ articles });
       })
     })
