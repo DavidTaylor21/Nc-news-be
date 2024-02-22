@@ -495,3 +495,25 @@ describe("ORDER /api/articles", () => {
       });
   })
 });
+describe('GET /api/users/:username', () => {
+  test('Should respond with 200 and an object containing the user requested', () => {
+    return request(app)
+    .get('/api/users/icellusedkars')
+    .expect(200)
+    .then((response) => {
+      expect(response.body.user).toEqual({
+        username: 'icellusedkars',
+        name: 'sam',
+        avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4'
+      })
+    })
+  })
+  test('Should respond with 404 user not found when user doesnt exist', () => {
+    return request(app)
+    .get('/api/users/userdoesnotexist')
+    .expect(404)
+    .then((response) => {
+      expect(response.body.msg).toBe('user not found')
+    })
+  })
+})

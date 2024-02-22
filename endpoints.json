@@ -21,7 +21,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
@@ -92,5 +92,14 @@
     "description" : "Will delete the comment corresponding to the comment_id given. Will not respond with any content",
     "queries" : [],
     "exampleRequest" : {}
+  },
+  "GET /api/users/:username" : {
+    "description" : "serves an object user requested by username",
+    "queries" : [],
+    "exampleResponse" : {
+      "username": "icellusedkars",
+      "name": "sam",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+    }
   }
 }
