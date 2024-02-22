@@ -476,7 +476,7 @@ describe("ORDER /api/articles", () => {
         });
       });
   });
-  test('Should respond with 200 and articles ordered by comment_count in ascending order when specified', () => {
+  test("Should respond with 200 and articles ordered by comment_count in ascending order when specified", () => {
     return request(app)
       .get("/api/articles?order=ASC&sort_by=comment_count")
       .expect(200)
@@ -485,35 +485,163 @@ describe("ORDER /api/articles", () => {
           descending: false,
         });
       });
-  })
-  test('Should respond with 400 bad request for order that is not asc or desc', () => {
+  });
+  test("Should respond with 400 bad request for order that is not asc or desc", () => {
     return request(app)
       .get("/api/articles/order=notavalidorder")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
       });
-  })
+  });
 });
-describe('GET /api/users/:username', () => {
-  test('Should respond with 200 and an object containing the user requested', () => {
+describe("GET /api/users/:username", () => {
+  test("Should respond with 200 and an object containing the user requested", () => {
     return request(app)
-    .get('/api/users/icellusedkars')
-    .expect(200)
-    .then((response) => {
-      expect(response.body.user).toEqual({
-        username: 'icellusedkars',
-        name: 'sam',
-        avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4'
-      })
-    })
-  })
-  test('Should respond with 404 user not found when user doesnt exist', () => {
+      .get("/api/users/icellusedkars")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.user).toEqual({
+          username: "icellusedkars",
+          name: "sam",
+          avatar_url:
+            "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+        });
+      });
+  });
+  test("Should respond with 404 user not found when user doesnt exist", () => {
     return request(app)
-    .get('/api/users/userdoesnotexist')
-    .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe('user not found')
-    })
-  })
-})
+      .get("/api/users/userdoesnotexist")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("user not found");
+      });
+  });
+});
+describe("PATCH /api/comments/comment_id", () => {
+  test("Should respond with 200 and responds with updated comment when increasing votes", () => {
+    const body = { inc_votes: 5 };
+    const expectedOutput = {
+      comment_id: 1,
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      votes: 21,
+      author: "butter_bridge",
+      article_id: 9,
+      created_at: "2020-04-06T12:17:00.000Z",
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(body)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedComment).toEqual(expectedOutput);
+      });
+  });
+  test("Should respond with 200 and responds with updated comment when decreasing votes", () => {
+    const body = { inc_votes: -5 };
+    const expectedOutput = {
+      comment_id: 1,
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      votes: 11,
+      author: "butter_bridge",
+      article_id: 9,
+      created_at: "2020-04-06T12:17:00.000Z",
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(body)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedComment).toEqual(expectedOutput);
+      });
+  });
+  test("Should respond with 200 and updated comment with votes below 0", () => {
+    const body = { inc_votes: -200 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(body)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedComment.votes).toBe(-184);
+      });
+  });
+  test("Should respond with 400 and bad request when body contains value that is not a number", () => {
+    const body = { inc_votes: "notanumber" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("Should respond with 400 and content missing if body is empty", () => {
+    const body = {};
+    return request(app)
+      .patch("/api/comments/1")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+  test("Should respond with 404 for comment_id that does not exist", () => {
+    const body = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/comments/999999")
+      .send(body)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("comment not found");
+      });
+  });
+  test("Should respond with 400 for comment_id that is not a number", () => {
+    const body = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/comments/notanumber")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+describe("GET /api/comments/comment_id", () => {
+  test("SHould respond with 200 status and an object corresponding to the given comment id", () => {
+    const expectedOutput = {
+      comment_id: 1,
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      votes: 16,
+      author: "butter_bridge",
+      article_id: 9,
+      created_at: 1586179020000,
+    };
+    return request(app)
+      .get("/api/comments/1")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comment.comment_id).toBe(1);
+        expect(typeof response.body.comment.body).toBe("string");
+        expect(typeof response.body.comment.votes).toBe("number");
+        expect(typeof response.body.comment.author).toBe("string");
+        expect(typeof response.body.comment.article_id).toBe("number");
+        expect(typeof response.body.comment.created_at).toBe("string");
+      });
+  });
+  test("Should respond with 404 and message comment not found for comment id given that does not exist", () => {
+    return request(app)
+      .get("/api/comments/9999999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("comment not found");
+      });
+  });
+  test("Should respond with 400 and message bad request for comment id that is not a number", () => {
+    return request(app)
+      .get("/api/comments/notanumber")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
