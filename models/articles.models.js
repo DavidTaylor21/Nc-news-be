@@ -81,9 +81,37 @@ function updateVotesOnArticle(article_id, votes) {
       return response.rows[0];
     });
 }
-
+function insertArticle(reqBody){
+  const {author, title, body, topic, article_img_url} = reqBody
+  let queryStr = `INSERT INTO articles`
+  const queryVals = [author, title, body, topic]
+  if(article_img_url){
+    queryStr+= ` 
+    (author, title, body, topic, article_img_url)
+    VALUES
+    ($1,$2,$3,$4,$5)
+    RETURNING *;`
+    queryVals.push(article_img_url)
+  }
+  else{
+    queryStr += ` 
+    (author, title, body, topic)
+    VALUES
+    ($1,$2,$3,$4)
+    RETURNING *;`
+  }
+  return db
+    .query(queryStr,queryVals)
+    .then((result) => {
+     return selectArticleById(result.rows[0].article_id)
+      .then((result) => {
+       return result
+      });
+    });
+}
 module.exports = {
   selectArticleById,
   selectAllArticles,
   updateVotesOnArticle,
+  insertArticle
 };

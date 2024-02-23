@@ -115,9 +115,20 @@
       ]
     }
   },
-  "PATCH /api/comments/:comment_id" : {
+  "PATCH /api/comments/:comment_id": {
     "description": "Will increment or decrement the votes based on the number passed on the object in the body. Responds with updated comment",
     "queries": [],
     "exampleRequest": { "inc_votes": 5 }
+  },
+  "POST /api/articles": {
+    "description": "Posts an article to the database and returns created article. image url is optional.",
+    "queries": [],
+    "exampleRequest": {
+      "author": "icellusedkars",
+      "title": "some random title",
+      "body": "a body for a random title",
+      "topic": "cats",
+      "article_img_url": "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700"
+    }
   }
 }

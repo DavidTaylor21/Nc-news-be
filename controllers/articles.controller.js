@@ -2,6 +2,7 @@ const {
   selectArticleById,
   selectAllArticles,
   updateVotesOnArticle,
+  insertArticle
 } = require("../models/articles.models");
 
 const {
@@ -62,11 +63,18 @@ function patchVotesOnArticle(req, res, next) {
     })
     .catch(next);
 }
-
+function postArticle(req,res,next){
+  const {body} = req
+  insertArticle(body).then((article) => {
+    res.status(200).send({article})
+  })
+  .catch(next)
+}
 module.exports = {
   getArticleById,
   getAllArticles,
   getCommentsByArticle,
   postCommentForArticle,
   patchVotesOnArticle,
+  postArticle
 };

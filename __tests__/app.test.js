@@ -645,3 +645,143 @@ describe("GET /api/comments/comment_id", () => {
       });
   });
 });
+describe("POST /api/articles", () => {
+  test("Should return 200 and object article that has been posted", () => {
+    const body = {
+      author: "icellusedkars",
+      title: "some random title",
+      body: "a body for a random title",
+      topic: "cats",
+      article_img_url:
+        "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(body)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article.author).toBe("icellusedkars");
+        expect(response.body.article.title).toBe("some random title");
+        expect(response.body.article.body).toBe("a body for a random title");
+        expect(response.body.article.topic).toBe("cats");
+        expect(response.body.article.article_img_url).toBe(
+          "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700"
+        );
+        expect(typeof response.body.article.article_id).toBe("number");
+        expect(typeof response.body.article.votes).toBe("number");
+        expect(typeof response.body.article.created_at).toBe("string");
+        expect(typeof response.body.article.comment_count).toBe("number");
+      });
+  });
+  test("responds with 200 and object article when passed body not containing img url", () => {
+    const body = {
+      author: "icellusedkars",
+      title: "some random title",
+      body: "a body for a random title",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(body)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article.author).toBe("icellusedkars");
+        expect(response.body.article.title).toBe("some random title");
+        expect(response.body.article.body).toBe("a body for a random title");
+        expect(response.body.article.topic).toBe("cats");
+        expect(response.body.article.article_img_url).toBe(
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+        );
+        expect(typeof response.body.article.article_id).toBe("number");
+        expect(typeof response.body.article.votes).toBe("number");
+        expect(typeof response.body.article.created_at).toBe("string");
+        expect(typeof response.body.article.comment_count).toBe("number");
+      });
+  });
+  test("Should respond with 400 and content missing when the body doesnt contain author", () => {
+    const body = {
+      title: "some random title",
+      body: "a body for a random title",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+  test("Should respond with 400 and content missing when the body doesnt contain title", () => {
+    const body = {
+      author: "icellusedkars",
+      body: "a body for a random title",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+  test("Should respond with 400 and content missing when the body doesnt contain body", () => {
+    const body = {
+      title: "some random title",
+      author: "icellusedkars",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+  test("Should respond with 400 and content missing when the body doesnt contain topic", () => {
+    const body = {
+      title: "some random title",
+      body: "a body for a random title",
+      author: "icellusedkars",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+  test('should respond with 400 bad request when topic does not exist', () => {
+    const body = {
+      author: "icellusedkars",
+      title: "some random title",
+      body: "a body for a random title",
+      topic: "notatopic",
+    };
+    return request(app)
+    .post('/api/articles')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe('not a valid topic')
+    })
+  })
+  test('should respond with 400 bad request when author does not exist', () => {
+    const body = {
+      author: "notavalidauthor",
+      title: "some random title",
+      body: "a body for a random title",
+      topic: "cats",
+    };
+    return request(app)
+    .post('/api/articles')
+    .send(body)
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe('not a valid author')
+    })
+  })
+});
