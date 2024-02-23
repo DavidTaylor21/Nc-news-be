@@ -21,11 +21,11 @@ function getArticleById(req, res, next) {
     .catch(next);
 }
 function getAllArticles(req, res, next) {
-  const {sort_by, order} = req.query
+  const {sort_by, order, limit, p} = req.query
   const topicQuery = req.query.topic
   selectAllTopics()
     .then((allTopics) => {
-      return selectAllArticles(topicQuery, allTopics, sort_by, order).then((articles) => {
+      return selectAllArticles(topicQuery, allTopics, sort_by, order, limit, p).then((articles) => {
         res.status(200).send({ articles });
       })
     })

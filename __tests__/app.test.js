@@ -95,7 +95,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(13);
+        expect(Array.isArray(response.body.articles)).toBe(true);
         expect(response.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -754,7 +754,7 @@ describe("POST /api/articles", () => {
         expect(response.body.msg).toBe("content missing from body");
       });
   });
-  test('should respond with 400 bad request when topic does not exist', () => {
+  test("should respond with 400 bad request when topic does not exist", () => {
     const body = {
       author: "icellusedkars",
       title: "some random title",
@@ -762,14 +762,14 @@ describe("POST /api/articles", () => {
       topic: "notatopic",
     };
     return request(app)
-    .post('/api/articles')
-    .send(body)
-    .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe('not a valid topic')
-    })
-  })
-  test('should respond with 400 bad request when author does not exist', () => {
+      .post("/api/articles")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("not a valid topic");
+      });
+  });
+  test("should respond with 400 bad request when author does not exist", () => {
     const body = {
       author: "notavalidauthor",
       title: "some random title",
@@ -777,11 +777,73 @@ describe("POST /api/articles", () => {
       topic: "cats",
     };
     return request(app)
-    .post('/api/articles')
-    .send(body)
-    .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe('not a valid author')
-    })
-  })
+      .post("/api/articles")
+      .send(body)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("not a valid author");
+      });
+  });
+});
+describe("QUERY limit and p api/articles", () => {
+  test("should respond with 200 and a array of 5 articles when limit is set to 5, on 2nd page", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=2&sort_by=article_id&order=ASC")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(5);
+        expect(response.body.articles[0].article_id).toBe(6);
+        expect(response.body.articles[0].total_count).toBe(13);
+      });
+  });
+  test("should respond with 200 and an array of 10 articles when limit and p are both omitted", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(10);
+      });
+  });
+  test("Should respond with 200 and an array of page 2 when limit is ommited by p is set to 2", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=ASC&p=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles[0].article_id).toBe(11);
+      });
+  });
+  test("should respond with 200 and array of articles length set by limit on first page when p is omitted", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=ASC&limit=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(2);
+        expect(response.body.articles[0].article_id).toBe(1);
+      });
+  });
+  test("should respond with 200 and an empty array for page requests with no results", () => {
+    return request(app)
+      .get("/api/articles?p=99999")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(0);
+      });
+  });
+  test("should respond with 400 for page query that is not a number", () => {
+    return request(app)
+      .get("/api/articles?p=notanumber")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("should respond with 400 for limit query that is not a number", () => {
+    return request(app)
+      .get("/api/articles?limit=notanumber")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
 });
