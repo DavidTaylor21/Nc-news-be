@@ -118,7 +118,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then((response) => {
-        expect(response.body.comments.length).toBe(11);
+        expect(Array.isArray(response.body.comments)).toBe(true);
         expect(response.body.comments).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -841,6 +841,66 @@ describe("QUERY limit and p api/articles", () => {
   test("should respond with 400 for limit query that is not a number", () => {
     return request(app)
       .get("/api/articles?limit=notanumber")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+describe("QUERY limit and p api/articles/:article_id/comments", () => {
+  test("should respond with 200 and a array of 2 comments when limit is set to 2, on 2nd page", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=2&p=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(2);
+        expect(typeof response.body.comments[0].total_count).toBe("number");
+      });
+  });
+  test("should respond with 200 and an array of 10 comments when limit and p are both omitted", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(10);
+      });
+  });
+  test("Should respond with 200 and an array of page 2 when limit is ommited by p is set to 2", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(1);
+      });
+  });
+  test("should respond with 200 and array of comments length set by limit on first page when p is omitted", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(2);
+      });
+  });
+  test("should respond with 200 and an empty array for page requests with no results", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=99999")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(0);
+      });
+  });
+  test("should respond with 400 for page query that is not a number", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=notanumber")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("should respond with 400 for limit query that is not a number", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=notanumber")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");

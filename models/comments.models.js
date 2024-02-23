@@ -1,12 +1,15 @@
 const db = require("../db/connection");
 
-function selectCommentsByArticle(article_id) {
+function selectCommentsByArticle(article_id, limit = 10, p = 1) {
+  const offset = (p-1)*limit
   return db
     .query(
-      `SELECT * FROM comments
+      `SELECT * FROM comments,
+      CAST((SELECT COUNT(*) FROM articles) AS INT) AS total_count
           WHERE article_id = $1
-          ORDER BY created_at DESC;`,
-      [article_id]
+          ORDER BY created_at DESC
+          LIMIT $2 OFFSET $3`,
+      [article_id, limit, offset]
     )
     .then(({ rows }) => {
       return rows;

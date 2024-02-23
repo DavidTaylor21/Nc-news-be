@@ -2,7 +2,7 @@ const {
   selectArticleById,
   selectAllArticles,
   updateVotesOnArticle,
-  insertArticle
+  insertArticle,
 } = require("../models/articles.models");
 
 const {
@@ -21,20 +21,28 @@ function getArticleById(req, res, next) {
     .catch(next);
 }
 function getAllArticles(req, res, next) {
-  const {sort_by, order, limit, p} = req.query
-  const topicQuery = req.query.topic
+  const { sort_by, order, limit, p } = req.query;
+  const topicQuery = req.query.topic;
   selectAllTopics()
     .then((allTopics) => {
-      return selectAllArticles(topicQuery, allTopics, sort_by, order, limit, p).then((articles) => {
+      return selectAllArticles(
+        topicQuery,
+        allTopics,
+        sort_by,
+        order,
+        limit,
+        p
+      ).then((articles) => {
         res.status(200).send({ articles });
-      })
+      });
     })
     .catch(next);
 }
 function getCommentsByArticle(req, res, next) {
   const { article_id } = req.params;
+  const { limit, p } = req.query;
   Promise.all([
-    selectCommentsByArticle(article_id),
+    selectCommentsByArticle(article_id, limit, p),
     selectArticleById(article_id),
   ])
     .then((comments) => {
@@ -63,12 +71,13 @@ function patchVotesOnArticle(req, res, next) {
     })
     .catch(next);
 }
-function postArticle(req,res,next){
-  const {body} = req
-  insertArticle(body).then((article) => {
-    res.status(200).send({article})
-  })
-  .catch(next)
+function postArticle(req, res, next) {
+  const { body } = req;
+  insertArticle(body)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch(next);
 }
 module.exports = {
   getArticleById,
@@ -76,5 +85,5 @@ module.exports = {
   getCommentsByArticle,
   postCommentForArticle,
   patchVotesOnArticle,
-  postArticle
+  postArticle,
 };
