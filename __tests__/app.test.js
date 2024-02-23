@@ -907,3 +907,51 @@ describe("QUERY limit and p api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("POST /api/topics", () => {
+  test("should respond with 200 and return the posted topic", () => {
+    const newTopic = {
+      slug: "New topic name",
+      description: "description here",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.newTopic).toEqual(newTopic);
+      });
+  });
+  test("should respond with 400 bad request when provided with body that doesnt contain slug", () => {
+    const newTopic = { description: "new description" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+  test("should respond with 400 bad request when provided with body that doesnt contain description", () => {
+    const newTopic = { slug: "new topic" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("content missing from body");
+      });
+  });
+  test("should respond with 400 bad request when provided with a topic that already exists", () => {
+    const newTopic = {
+      description: 'The man, the Mitch, the legend',
+      slug: 'mitch'
+    }
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("slug already exists");
+      });
+  })
+});

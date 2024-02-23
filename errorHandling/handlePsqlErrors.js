@@ -11,7 +11,10 @@ function handlePsqlErrors(err,req,res,next){
     if(err.code = '23502' && err.detail.includes('Failing row')){
         res.status(400).send({msg: "content missing from body"})
     }
-
+    if(err.code = '23505'){
+        const key = err.detail.match(/(?!\()(\w+)(?=\))/i)
+        res.status(400).send({msg : `${key[0]} already exists`})
+    }
     next(err)
 }
 module.exports = handlePsqlErrors

@@ -130,5 +130,13 @@
       "topic": "cats",
       "article_img_url": "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700"
     }
+  },
+  "POST /api/topics": {
+    "description": "posts a new topic to the database providing it does not exist already",
+    "queries": [],
+    "exampleRequest": {
+      "slug": "New topic name",
+      "description": "description here"
+    }
   }
 }
