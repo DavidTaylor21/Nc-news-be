@@ -88,7 +88,7 @@
     "queries": [],
     "exampleRequest": { "inc_votes": 5 }
   },
-  "DELETE /api/comments/notanumber": {
+  "DELETE /api/comments/:comment_id": {
     "description": "Will delete the comment corresponding to the comment_id given. Will not respond with any content",
     "queries": [],
     "exampleRequest": {}
