@@ -3,7 +3,7 @@
     "description": "serves up a json representation of all the available endpoints of the api",
     "queries": [],
     "exampleResponse": {
-      "endpointsInformation": {
+      "endpointInformation": {
         "GET /endpoint": {
           "description": "what you can expect to recieve from the endpoint",
           "queries": ["any_possible_queries"],
