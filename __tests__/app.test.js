@@ -791,11 +791,20 @@ describe("QUERY limit and p api/articles", () => {
       .get("/api/articles?limit=5&p=2&sort_by=article_id&order=ASC")
       .expect(200)
       .then((response) => {
+    
         expect(response.body.articles.length).toBe(5);
         expect(response.body.articles[0].article_id).toBe(6);
         expect(response.body.articles[0].total_count).toBe(13);
       });
   });
+  test("Should respond with correct total count when topic query is chosen", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles[0].total_count).toBe(1);
+      });
+  })
   test("should respond with 200 and an array of 10 articles when limit and p are both omitted", () => {
     return request(app)
       .get("/api/articles")

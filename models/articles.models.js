@@ -50,11 +50,18 @@ function selectAllArticles(
   }
   const values = [];
   let queryStr = `
-  SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count, CAST((SELECT COUNT(*) FROM articles) AS INT) AS total_count FROM articles
+  SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count,`
+  if(!topicQuery){
+   queryStr += ` CAST((SELECT COUNT(*) FROM articles) AS INT) AS total_count FROM articles
   LEFT JOIN comments
-  ON articles.article_id = comments.article_id`;
+  ON articles.article_id = comments.article_id`
+  }
+   ;
   if (topicQuery) {
-    queryStr += " WHERE articles.topic = $1";
+    queryStr += 
+    `CAST((SELECT COUNT(*) FROM articles WHERE articles.topic = $1) AS INT) AS total_count FROM articles
+  LEFT JOIN comments
+  ON articles.article_id = comments.article_id WHERE articles.topic = $1`;
     values.push(topicQuery);
   }
   if (sort_by === "comment_count") {
